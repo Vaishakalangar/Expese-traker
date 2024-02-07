@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LENGTH 50
+#define MAX_VALUE_LENGTH 100
+
+// Structure to hold key-value pairs
+typedef struct {
+    char key[MAX_KEY_LENGTH];
+    char value[MAX_VALUE_LENGTH];
+} KeyValue;
+
+// Database structure
+typedef struct {
+    KeyValue *data;
+    int capacity;
+    int size;
+} Database;
+
+// Initialize the database
+void initialize(Database *db, int capacity) {
+    db->data = (KeyValue *)malloc(capacity * sizeof(KeyValue));
+    db->capacity = capacity;
+    db->size = 0;
+}
+
+// Insert key-value pair into the database
+void insert(Database *db, const char *key, const char *value) {
+    if (db->size >= db->capacity) {
+        printf("Database is full. Cannot insert.\n");
+        return;
+    }
+
+    strcpy(db->data[db->size].key, key);
+    strcpy(db->data[db->size].value, value);
+    db->size++;
+}
+
+// Get value for a given key
+const char* get(Database *db, const char *key) {
+    for (int i = 0; i < db->size; i++) {
+        if (strcmp(db->data[i].key, key) == 0) {
+            return db->data[i].value;
+        }
+    }
+    return NULL; // Key not found
+}
+
+int main() {
+    Database db;
+    initialize(&db, 100);
+
+    insert(&db, "name", "John");
+    insert(&db, "age", "30");
+
+    const char *name = get(&db, "name");
+    const char *age = get(&db, "age");
+
+    if (name != NULL)
+        printf("Name: %s\n", name);
+    if (age != NULL)
+        printf("Age: %s\n", age);
+
+    // Clean up
+    free(db.data);
+
+    return 0;
+}
